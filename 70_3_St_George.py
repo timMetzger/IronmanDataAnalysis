@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 # Converts time in table from hh:mm:ss ---> mm:ss
 def time_reducer(time):
@@ -44,6 +44,9 @@ axs1[1,0].hist(non_pro_males['Swim'],edgecolor='black')
 axs1[1,1].hist(non_pro_females['Swim'],edgecolor='black')
 
 
+
+
+
 axs1[0,0].set_title('Pro Male Swim Times')
 axs1[0,1].set_title('Pro Female Swim Times')
 axs1[1,0].set_title('Male Swim Times')
@@ -65,7 +68,7 @@ for i in range(3):
     axs1[1,1].axvline(x=non_pro_females_quartiles[i], color=quartile_colors[i],label='q{0} = {1:8.2f}'.format(i+1, non_pro_females_quartiles[i]))
 
 
-axs1[1,0].distplot(non_pro_males,color='r',alpha=0.5)
+
 
 axs1[0,0].legend(loc='upper right',title='Legend')
 axs1[0,1].legend(loc='upper right',title='Legend')
