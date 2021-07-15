@@ -63,7 +63,7 @@ axs1[1,1].set_xlabel('Time (m)')
 
 for i in range(3):
     axs1[0,0].axvline(x=male_pros_swim_quartiles[i], color=quartile_colors[i],label='q{0} = {1:8.2f}'.format(i+1, male_pros_swim_quartiles[i]))
-    axs1[0,1].axvline(x=male_pros_swim_quartiles[i], color=quartile_colors[i],label='q{0} = {1:8.2f}'.format(i+1, male_pros_swim_quartiles[i]))
+    axs1[0,1].axvline(x=female_pros_swim_quartiles[i], color=quartile_colors[i],label='q{0} = {1:8.2f}'.format(i+1, female_pros_swim_quartiles[i]))
     axs1[1,0].axvline(x=non_pro_males_quartiles[i], color=quartile_colors[i],label='q{0} = {1:8.2f}'.format(i+1, non_pro_males_quartiles[i]))
     axs1[1,1].axvline(x=non_pro_females_quartiles[i], color=quartile_colors[i],label='q{0} = {1:8.2f}'.format(i+1, non_pro_females_quartiles[i]))
 
