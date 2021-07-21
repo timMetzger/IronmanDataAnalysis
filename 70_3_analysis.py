@@ -35,32 +35,25 @@ def main():
 
 
     pd.set_option('display.max_columns',None)
-    all_files = glob.glob('races/Ironman_70_3_*.csv')
-
-    all_races_list = []
-    for file in all_files:
-        df = pd.read_csv(file,index_col=None,header=0)
-        all_races_list.append(df)
-
-    pure_data = pd.concat(all_races_list, axis=0, ignore_index=True)
-    pure_data.drop('11', axis=1, inplace=True)
+    pure_data = pd.read_csv('Ironman_70_3s.csv')
 
     # Creating a copy of the data for manipulation
     data = pure_data.copy()
-    # Converting the time columns to a more useful format
+    data = data[data['Time'] != 'DNS']
+    # # Converting the time columns to a more useful format
     data['Swim'] = time_reducer(data['Swim'])
     data['Bike'] = time_reducer(data['Bike'])
     data['Run'] = time_reducer(data['Run'])
     data['Time'] = time_reducer(data['Time'])
-
-    # Converting the location field to separate city and country columns with country code
-    data['Country'] = data.apply(lambda row: try_code([row['Location'].split(", ")[-1]],country_code_dic),axis = 1)
-    data['City'] = data.apply(lambda row: row['Location'].split(", ")[0],axis = 1)
+    #
+    # # Converting the location field to separate city and country columns with country code
+    # data['Country'] = data.apply(lambda row: try_code([row['Location'].split(", ")[-1]],country_code_dic),axis = 1)
+    # data['City'] = data.apply(lambda row: row['Location'].split(", ")[0],axis = 1)
 
     # Get approximate temperature at 6:00 AM, 9:00 AM, 12:00 PM, 3:00 PM, 6:00 PM, 9:00 PM,
 
 
-    print(data.head())
+    print(data)
 
 main()
 

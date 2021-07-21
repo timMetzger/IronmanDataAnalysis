@@ -30,8 +30,11 @@ for race in all_races[2:]:
     # Replacing non file directory compatible items
     print(race)
     race_name = race[0].replace(" ", "_")
-    race_name = race_name.replace(".","_") + ".csv"
-    if path.exists('races/'+race_name):
+    race_name = race_name.replace(".","_")
+    race_date = race[1].replace("/","_")
+
+    # Skipping race if already recorded
+    if path.exists('races/'+race_name+race_date+".csv"):
         continue
     # Setting up pagination navigation loop
     race_url = base_url + race[-1] + '{}'
@@ -70,7 +73,7 @@ for race in all_races[2:]:
         ironman_dataFrame['Location'] = race[2]
 
     # Saving race dataframe into csv's
-    ironman_dataFrame.to_csv("races/"+race_name,index=False)
+    ironman_dataFrame.to_csv("races/"+race_name+race_date+'.csv',index=False)
     print(ironman_dataFrame)
 
 print("--- %s seconds ---" % (time.time() - start_time))
