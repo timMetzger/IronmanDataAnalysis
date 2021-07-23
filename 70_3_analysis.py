@@ -4,56 +4,64 @@
 ###############################
 
 import pandas as pd
-import csv
 import numpy as np
 import matplotlib.pyplot as plt
-import glob
-
-# Converts time in table from hh:mm:ss ---> mm:ss
-def time_reducer(time):
-
-    split_time = time.str.split(':', expand=True)
-    time = pd.to_numeric(split_time[0])*60+pd.to_numeric(split_time[1])+pd.to_numeric(split_time[2])/60
-    return time
-
-def try_code(key,dic):
-    country = str(key[0])
-    try:
-        country_code = dic[country]
-    except KeyError:
-        country_code = country
-    return country_code
 
 
 def main():
-    # Getting a dictionary to convert country names to ISO 3166 codes
-    country_code_dic = {}
-    with open('wikipedia-iso-country-codes.csv') as f:
-        file = csv.DictReader(f,delimiter=",")
-        for line in file:
-            country_code_dic[line['English short name lower case']] = line['Alpha-2 code']
+    pd.set_option('display.max_columns', None)
 
+    data = pd.read_csv('cleaned_data.csv')
 
-    pd.set_option('display.max_columns',None)
-    pure_data = pd.read_csv('Ironman_70_3s.csv')
+    pro_men = data[data['Division'] == 'MPRO']
+    pro_women = data[data['Division'] == 'FPRO']
 
-    # Creating a copy of the data for manipulation
-    data = pure_data.copy()
-    data = data[data['Time'] != 'DNS']
-    # # Converting the time columns to a more useful format
-    data['Swim'] = time_reducer(data['Swim'])
-    data['Bike'] = time_reducer(data['Bike'])
-    data['Run'] = time_reducer(data['Run'])
-    data['Time'] = time_reducer(data['Time'])
+    QUARTILES = [0.25, 0.5, 0.75]
+    QUARTILE_COLORS = ['y', 'r', 'g']
+
+    # Swim Plots
+    pro_men_swim_quartiles = np.quantile(pro_men['Swim'], QUARTILES)
+    pro_women_swim_quartiles = np.quantile(pro_women['Swim'], QUARTILES)
+    fig1, axs1 = plt.subplots(1, 2)
+    # Plotting quartiles
+    for i in range(3):
+        axs1[0].axvline(x=pro_men_swim_quartiles[i], color=QUARTILE_COLORS[i],
+                        label='q{0} = {1:8.2f}'.format(i + 1, pro_men_swim_quartiles[i]))
+        axs1[1].axvline(x=pro_women_swim_quartiles[i], color=QUARTILE_COLORS[i],
+                        label='q{0} = {1:8.2f}'.format(i + 1, pro_women_swim_quartiles[i]))
+    # Plotting histograms
+    axs1[0].hist(pro_men['Swim'], edgecolor='black', bins=20)
+    axs1[1].hist(pro_women['Swim'], edgecolor='black', bins=20)
+
+    axs1[0].set_title('Pro Men Swim Time')
+    axs1[1].set_title('Pro Women Swim Time')
+
+    axs1[0].set_xlabel('Time (m)')
+    axs1[1].set_xlabel('Time (m)')
+
+    axs1[0].legend(loc='upper right', title='legend')
+    axs1[1].legend(loc='upper right', title='legend')
+    pro_men_best_swimmers = pro_men[pro_men['Swim'] < pro_men_swim_quartiles[0]]
+    pro_men_worst_swimmers = pro_men[pro_men['Swim'] > pro_men_swim_quartiles[2]]
+
+    fig2, axs2 = plt.subplots(1,2)
+    print(pro_men_best_swimmers['Place'].value_counts())
+    pro_men_best_swimmers['Place'].value_counts().plot(kind='bar',ax=axs2[0])
+    pro_men_worst_swimmers['Place'].value_counts().plot(kind='bar',ax=axs2[1])
+
+    # fig2, axs2 = plt.subplots(1,2)
+    # #axs2[0].bar(pro_men_best_swimmers_placing, edgecolor='black')
+    # #axs2[1].bar(pro_men_worst_swimmers_placing, edgecolor='black')
     #
-    # # Converting the location field to separate city and country columns with country code
-    # data['Country'] = data.apply(lambda row: try_code([row['Location'].split(", ")[-1]],country_code_dic),axis = 1)
-    # data['City'] = data.apply(lambda row: row['Location'].split(", ")[0],axis = 1)
+    # axs2[0].set_title('Placings of Pro Men above 75% Quartile')
+    # axs2[1].set_title('Placings of Pro Women above 75% Quartile')
+    #
+    # print(pro_men_best_swimmers_placing[0:])
 
-    # Get approximate temperature at 6:00 AM, 9:00 AM, 12:00 PM, 3:00 PM, 6:00 PM, 9:00 PM,
+
+    plt.show()
 
 
-    print(data)
+
 
 main()
-
